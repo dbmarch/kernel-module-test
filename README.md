@@ -27,3 +27,8 @@ or
 ```
     dmesg
 ```
+
+With params
+```
+    sudo insmod hello-3.ko mystring='test-string' mybyte=154 myintArray=-1
+```
