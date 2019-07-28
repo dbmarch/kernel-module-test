@@ -170,6 +170,8 @@ device_write(struct file *filp, const char *buff, size_t len, loff_t * off)
 
 
 
+MODULE_LICENSE("GPL");
+
 
 // After this is run, check dmesg to determine the device number:
 //ie:
