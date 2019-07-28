@@ -1,38 +1,3 @@
-
-// struct file_operations {
-// 	struct module *owner;
-// 	 loff_t(*llseek) (struct file *, loff_t, int);
-// 	 ssize_t(*read) (struct file *, char __user *, size_t, loff_t *);
-// 	 ssize_t(*aio_read) (struct kiocb *, char __user *, size_t, loff_t);
-// 	 ssize_t(*write) (struct file *, const char __user *, size_t, loff_t *);
-// 	 ssize_t(*aio_write) (struct kiocb *, const char __user *, size_t,
-// 			      loff_t);
-// 	int (*readdir) (struct file *, void *, filldir_t);
-// 	unsigned int (*poll) (struct file *, struct poll_table_struct *);
-// 	int (*ioctl) (struct inode *, struct file *, unsigned int,
-// 		      unsigned long);
-// 	int (*mmap) (struct file *, struct vm_area_struct *);
-// 	int (*open) (struct inode *, struct file *);
-// 	int (*flush) (struct file *);
-// 	int (*release) (struct inode *, struct file *);
-// 	int (*fsync) (struct file *, struct dentry *, int datasync);
-// 	int (*aio_fsync) (struct kiocb *, int datasync);
-// 	int (*fasync) (int, struct file *, int);
-// 	int (*lock) (struct file *, int, struct file_lock *);
-// 	 ssize_t(*readv) (struct file *, const struct iovec *, unsigned long,
-// 			  loff_t *);
-// 	 ssize_t(*writev) (struct file *, const struct iovec *, unsigned long,
-// 			   loff_t *);
-// 	 ssize_t(*sendfile) (struct file *, loff_t *, size_t, read_actor_t,
-// 			     void __user *);
-// 	 ssize_t(*sendpage) (struct file *, struct page *, int, size_t,
-// 			     loff_t *, int);
-// 	unsigned long (*get_unmapped_area) (struct file *, unsigned long,
-// 					    unsigned long, unsigned long,
-// 					    unsigned long);
-// };
-
-
 /*
  *  chardev.c: Creates a read-only char device that says how many times
  *  you've read from the dev file
@@ -52,6 +17,8 @@ static int device_open(struct inode *, struct file *);
 static int device_release(struct inode *, struct file *);
 static ssize_t device_read(struct file *, char *, size_t, loff_t *);
 static ssize_t device_write(struct file *, const char *, size_t, loff_t *);
+
+// Change chardev to be the name of the device.
 
 #define SUCCESS 0
 #define DEVICE_NAME "chardev"	/* Dev name as it appears in /proc/devices   */
@@ -104,9 +71,8 @@ void cleanup_module(void)
 	/* 
 	 * Unregister the device 
 	 */
-	int ret = unregister_chrdev(Major, DEVICE_NAME);
-	if (ret < 0)
-		printk(KERN_ALERT "Error in unregister_chrdev: %d\n", ret);
+	unregister_chrdev(Major, DEVICE_NAME);
+	
 }
 
 /*
@@ -201,3 +167,53 @@ device_write(struct file *filp, const char *buff, size_t len, loff_t * off)
 	printk(KERN_ALERT "Sorry, this operation isn't supported.\n");
 	return -EINVAL;
 }
+
+
+
+
+// After this is run, check dmesg to determine the device number:
+//ie:
+//[20865.778275] I was assigned major number 236. To talk to
+//[20865.778279] the driver, create a dev file with
+//[20865.778281] 'mknod /dev/chardev c 236 0'.
+//[20865.778282] Try various minor numbers. Try to cat and echo to
+//[20865.778283] the device file.
+//[20865.778283] Remove the device file and module when done.
+
+
+// char device functions:
+
+// struct file_operations {
+// 	struct module *owner;
+// 	 loff_t(*llseek) (struct file *, loff_t, int);
+// 	 ssize_t(*read) (struct file *, char __user *, size_t, loff_t *);
+// 	 ssize_t(*aio_read) (struct kiocb *, char __user *, size_t, loff_t);
+// 	 ssize_t(*write) (struct file *, const char __user *, size_t, loff_t *);
+// 	 ssize_t(*aio_write) (struct kiocb *, const char __user *, size_t,
+// 			      loff_t);
+// 	int (*readdir) (struct file *, void *, filldir_t);
+// 	unsigned int (*poll) (struct file *, struct poll_table_struct *);
+// 	int (*ioctl) (struct inode *, struct file *, unsigned int,
+// 		      unsigned long);
+// 	int (*mmap) (struct file *, struct vm_area_struct *);
+// 	int (*open) (struct inode *, struct file *);
+// 	int (*flush) (struct file *);
+// 	int (*release) (struct inode *, struct file *);
+// 	int (*fsync) (struct file *, struct dentry *, int datasync);
+// 	int (*aio_fsync) (struct kiocb *, int datasync);
+// 	int (*fasync) (int, struct file *, int);
+// 	int (*lock) (struct file *, int, struct file_lock *);
+// 	 ssize_t(*readv) (struct file *, const struct iovec *, unsigned long,
+// 			  loff_t *);
+// 	 ssize_t(*writev) (struct file *, const struct iovec *, unsigned long,
+// 			   loff_t *);
+// 	 ssize_t(*sendfile) (struct file *, loff_t *, size_t, read_actor_t,
+// 			     void __user *);
+// 	 ssize_t(*sendpage) (struct file *, struct page *, int, size_t,
+// 			     loff_t *, int);
+// 	unsigned long (*get_unmapped_area) (struct file *, unsigned long,
+// 					    unsigned long, unsigned long,
+// 					    unsigned long);
+// };
+
+
