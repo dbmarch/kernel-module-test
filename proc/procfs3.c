@@ -21,21 +21,29 @@ static ssize_t mywrite(struct file *file, const char __user *ubuf,size_t count, 
 		return -EFAULT;
 	if(copy_from_user(buf,ubuf,count))
 		return -EFAULT;
+    buf[count] = 0;
 	c = strlen(buf);
-	*ppos = c;
-	return c;
+
+	*ppos = 0;
+    return c;
 }
  
 static ssize_t myread(struct file *file, char __user *ubuf,size_t count, loff_t *ppos) 
 {
-    int len = count;
+    int len = strlen(buf);
+    
     if (len > BUFSIZE ) 
-       len = BUFSIZE;
+        len = BUFSIZE;
+    
+    if (*ppos > 0) {
+        return 0;
+    }
+
 	printk( KERN_DEBUG "read handler count=%d\n", (int) count);
-	if(copy_to_user(ubuf,buf, len))
+	if(copy_to_user(ubuf,buf, len+1))
 		return -EFAULT;
-	*ppos = len;
-	return len;
+	*ppos = len+1;
+	return len+1;
 }
  
 static struct file_operations myops = 
@@ -48,7 +56,7 @@ static struct file_operations myops =
 static int simple_init(void)
 {
     memset (buf, 0, sizeof(buf));
-    strcpy (buf, "hello!");
+    strcpy (buf, "hello!\n");
 	ent=proc_create(procfs_name,0666,NULL,&myops);
 	return 0;
 }
