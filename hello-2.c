@@ -5,6 +5,7 @@
 #include <linux/module.h>	/* Needed by all modules */
 #include <linux/kernel.h>	/* Needed for KERN_INFO */
 #include <linux/init.h>
+
 #define DRIVER_AUTHOR   "Dave <dbmarch@gmail.com>"
 #define DRIVER_DESC     "Test module"
 
